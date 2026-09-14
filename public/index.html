@@ -4,185 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Website Health Check</title>
+<meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
-<style>
-:root{
-  --ink:#111111;
-  --ink-soft:#42484c;
-  --muted:#6e767b;
-  --paper:#F5F7F8;
-  --card:#ffffff;
-  --rule:#dde2e4;
-  --rule-soft:#eceff1;
-  --mint:#A6FFF8;
-  --mint-deep:#0b7f78;
-  --mint-ink:#065a55;
-  --crit:#b8342a;
-  --warn:#9d6708;
-  --info:#6e767b;
-  --good:#14714a;
-  --font:gdsherpa,"gdsherpaVF4 fallback",Figtree,Helvetica,Arial,sans-serif;
-}
-*{margin:0;padding:0;box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
-body{font-family:var(--font);background:var(--paper);color:var(--ink);line-height:1.55;font-size:16px}
-.wrap{max-width:900px;margin:0 auto;padding:0 24px}
-
-/* Masthead: dark bar, mint wordmark */
-.mast{
-  position:sticky;top:0;z-index:50;
-  background:rgba(17,17,17,.92);
-  -webkit-backdrop-filter:saturate(180%) blur(14px);
-  backdrop-filter:saturate(180%) blur(14px);
-  color:#fff;
-  box-shadow:inset 0 -1px 0 rgba(166,255,248,.22);
-}
-.mast .wrap{display:flex;align-items:center;justify-content:space-between;gap:18px;padding-block:15px;flex-wrap:wrap}
-.brand{font-weight:700;font-size:1.02rem;letter-spacing:-.025em;color:#fff}
-.by{
-  font-size:.74rem;font-weight:500;letter-spacing:.01em;
-  color:var(--mint);
-  border:1px solid rgba(166,255,248,.32);
-  border-radius:999px;
-  padding:5px 13px;
-  white-space:nowrap;
-}
-
-.hero{padding-block:60px 40px}
-.hero h1{font-weight:800;font-size:clamp(2.1rem,5.8vw,3.35rem);line-height:1.05;letter-spacing:-.035em;max-width:16ch}
-.hero p{margin-top:18px;max-width:58ch;color:var(--ink-soft);font-size:1.07rem}
-
-form{margin-top:30px;display:flex;gap:10px;flex-wrap:wrap}
-.field{flex:1 1 320px;display:flex;align-items:center;background:var(--card);border:1.5px solid var(--rule);border-radius:8px}
-.field:focus-within{border-color:var(--mint-deep);box-shadow:0 0 0 4px rgba(166,255,248,.55)}
-.field .scheme{padding:0 2px 0 15px;color:var(--muted);font-size:.95rem;flex:none}
-input[type=text]{flex:1;border:0;background:transparent;padding:15px 15px 15px 2px;font:inherit;font-size:1rem;color:var(--ink);min-width:0}
-input[type=text]:focus{outline:none}
-button.go{font:inherit;font-weight:700;font-size:1rem;background:var(--ink);color:var(--mint);border:0;border-radius:8px;padding:15px 28px;cursor:pointer;letter-spacing:-.01em}
-button.go:hover{background:var(--mint);color:var(--ink)}
-button.go:disabled{background:var(--muted);color:#fff;cursor:progress}
-button.go:focus-visible,a:focus-visible,input:focus-visible,.actions button:focus-visible{outline:3px solid var(--mint-deep);outline-offset:2px}
-
-.status{margin-top:28px;font-size:.95rem;color:var(--ink-soft);display:none}
-.status.on{display:block}
-.status .bar{height:4px;background:#e2e7e9;border-radius:2px;overflow:hidden;margin-top:10px}
-.status .bar i{display:block;height:100%;width:35%;background:var(--mint-deep);animation:slide 1.15s ease-in-out infinite}
-@keyframes slide{0%{margin-left:-35%}100%{margin-left:100%}}
-@media (prefers-reduced-motion:reduce){.status .bar i{animation:none;width:100%}}
-.error{margin-top:28px;border-left:4px solid var(--crit);padding:12px 0 12px 16px;display:none}
-.error.on{display:block}
-.error strong{display:block;font-weight:700}
-
-#report{display:none;padding-bottom:72px;scroll-margin-top:78px}
-#report.on{display:block}
-.report-head{border-top:3px solid var(--ink);padding-top:22px;margin-top:46px;display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap}
-.report-head h2{font-size:1.55rem;font-weight:800;letter-spacing:-.03em;word-break:break-word}
-.report-head .when{font-size:.85rem;color:var(--muted);margin-top:4px}
-.actions button{font:inherit;font-size:.87rem;background:var(--card);border:1.5px solid var(--rule);border-radius:8px;padding:8px 16px;cursor:pointer;color:var(--ink-soft)}
-.actions button:hover{border-color:var(--mint-deep);color:var(--mint-ink)}
-
-/* Score panel on dark, mint meter */
-.meter{margin-top:28px;background:var(--ink);color:#fff;border-radius:12px;padding:28px 30px}
-.meter-top{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
-.meter-score{font-weight:800;font-size:3.8rem;line-height:1;letter-spacing:-.045em;color:var(--mint)}
-.meter-grade{font-weight:700;font-size:1.05rem;color:var(--ink);background:var(--mint);border-radius:6px;padding:4px 12px}
-.meter-verdict{color:#ccd3d6;font-size:1rem;margin-left:auto;text-align:right;max-width:34ch}
-.segs{display:flex;gap:4px;margin-top:22px;height:34px}
-.seg{position:relative;background:#2a2e30;border-radius:4px;overflow:hidden}
-.seg i{position:absolute;inset:0 auto 0 0;background:var(--mint)}
-.seg.low i{background:#ff7a6e}
-.seg.mid i{background:#ffc866}
-.seg-labels{display:flex;gap:4px;margin-top:10px}
-.seg-labels div{font-size:.79rem;color:#9aa2a6;line-height:1.3;padding-right:6px}
-.seg-labels b{display:block;color:#fff;font-weight:700;font-size:.88rem}
-
-.sect{margin-top:44px}
-.sect > h3{font-size:1.14rem;font-weight:700;letter-spacing:-.02em;padding-bottom:10px;border-bottom:2px solid var(--ink)}
-.finding{display:flex;gap:14px;padding:15px 0;border-bottom:1px solid var(--rule-soft)}
-.finding .tick{flex:none;width:5px;border-radius:3px;background:var(--info)}
-.finding.critical .tick{background:var(--crit)}
-.finding.warn .tick{background:var(--warn)}
-.finding .body{flex:1}
-.finding .label{font-weight:700}
-.finding .detail{color:var(--ink-soft);font-size:.94rem;margin-top:2px}
-.finding .area{font-size:.78rem;color:var(--muted);margin-top:5px}
-.clean{padding:16px 0;color:var(--good);font-weight:600}
-
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:0 30px;margin-top:6px}
-.row{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--rule-soft);font-size:.92rem;align-items:baseline}
-.row span:first-child{color:var(--muted)}
-.row span:last-child{text-align:right;font-weight:600;word-break:break-word}
-.row .yes{color:var(--good)}
-.row .no{color:var(--crit)}
-
-.snippet{background:var(--card);border:1px solid var(--rule);border-left:4px solid var(--mint);border-radius:8px;padding:14px 16px;margin-top:12px}
-.snippet .k{font-size:.78rem;color:var(--muted)}
-.snippet .v{margin-top:3px}
-.snippet .v.empty{color:var(--crit);font-style:italic}
-
-.pending{color:var(--muted);font-size:.93rem;padding:14px 0;display:flex;align-items:center;gap:10px}
-.pending .dot{width:8px;height:8px;border-radius:50%;background:var(--mint-deep);animation:pulse 1.1s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:.25}50%{opacity:1}}
-@media (prefers-reduced-motion:reduce){.pending .dot{animation:none}}
-.psi-scores{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-top:14px}
-.psi-score{background:var(--card);border:1.5px solid var(--rule);border-radius:10px;padding:14px 16px;text-align:center}
-.psi-score .n{font-size:2.1rem;font-weight:800;line-height:1.1;letter-spacing:-.03em}
-.psi-score .l{font-size:.8rem;color:var(--muted);margin-top:2px}
-.psi-score.good{border-color:var(--good)}.psi-score.good .n{color:var(--good)}
-.psi-score.mid{border-color:var(--warn)}.psi-score.mid .n{color:var(--warn)}
-.psi-score.bad{border-color:var(--crit)}.psi-score.bad .n{color:var(--crit)}
-.src{font-size:.79rem;color:var(--muted);margin-top:10px}
-.opp li{list-style:none;padding:9px 0;border-bottom:1px solid var(--rule-soft);display:flex;justify-content:space-between;gap:14px;font-size:.92rem}
-.opp .save{color:var(--mint-ink);font-weight:600;flex:none}
-.posts{margin-top:12px}
-.posts li{list-style:none;padding:10px 0;border-bottom:1px solid var(--rule-soft);display:flex;justify-content:space-between;gap:16px;font-size:.93rem}
-.posts time{color:var(--muted);flex:none}
-
-.disclaimer{margin-top:52px;background:var(--card);border:1.5px solid var(--rule);border-top:4px solid var(--ink);padding:22px 24px;border-radius:8px}
-.disclaimer h4{font-size:.98rem;font-weight:700;margin-bottom:10px}
-.disclaimer p{font-size:.845rem;color:var(--ink-soft);line-height:1.62}
-.disclaimer p + p{margin-top:10px}
-
-footer{background:var(--ink);color:#8d9599;padding-block:40px;font-size:.85rem}
-footer .wrap{display:flex;justify-content:space-between;align-items:flex-start;gap:28px;flex-wrap:wrap}
-footer .f-main{max-width:46ch}
-footer .f-title{color:#fff;font-weight:700;font-size:.98rem;letter-spacing:-.02em;margin-bottom:7px}
-footer .f-note{line-height:1.6}
-footer .f-side{display:flex;flex-direction:column;gap:8px;align-items:flex-end;text-align:right}
-footer .f-tag{
-  font-size:.74rem;font-weight:500;color:var(--mint);
-  border:1px solid rgba(166,255,248,.32);border-radius:999px;padding:5px 13px;white-space:nowrap;
-}
-footer .f-fine{font-size:.78rem;color:#70777b;max-width:30ch}
-@media(max-width:620px){
-  footer .f-side{align-items:flex-start;text-align:left}
-}
-
-@media(max-width:620px){
-  .meter{padding:22px 20px}
-  .meter-verdict{margin-left:0;text-align:left}
-  .segs{height:26px}
-  .seg-labels div{font-size:.72rem}
-}
-@media print{
-  body{background:#fff;font-size:12px}
-  .hero,form,.status,.actions,.mast .by,footer{display:none !important}
-  .mast{position:static;background:#fff;color:#000;border-bottom:2px solid #000;box-shadow:none;backdrop-filter:none}
-  .meter{background:#fff;color:#000;border:2px solid #000;border-radius:0}
-  .meter-score{color:#000}
-  .meter-grade{background:#000;color:#fff}
-  .meter-verdict{color:#333}
-  .seg{background:#e5e5e5}.seg i{background:#111}
-  .seg-labels div{color:#555}.seg-labels b{color:#000}
-  #report{padding-bottom:0}
-  .report-head{margin-top:18px}
-  .sect{margin-top:24px;page-break-inside:avoid}
-  .disclaimer{page-break-inside:avoid;margin-top:24px}
-  a{color:inherit;text-decoration:none}
-}
-</style>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#111111">
+<link rel="stylesheet" href="/styles.css">
 </head>
 <body>
 
@@ -196,27 +26,56 @@ footer .f-fine{font-size:.78rem;color:#70777b;max-width:30ch}
 
 <main class="wrap">
 
-  <section class="hero">
-    <h1>See what your website looks like to Google.</h1>
-    <p>Enter an address and this will read the page the way a search engine does: what it can understand, how quickly it loads, when the site was last touched, and whether the blog is still running.</p>
+  <!-- Shown until the person identifies themselves -->
+  <section class="gate" id="gate" hidden>
+    <h1>Who is running this report?</h1>
+    <p class="sub">Your name and contact appear on every report you generate, so the customer knows who to follow up with. Entered once, then remembered on this device.</p>
 
-    <form id="form">
-      <label class="field" for="url">
-        <span class="scheme">https://</span>
-        <input type="text" id="url" name="url" placeholder="yourbusiness.com" autocomplete="url" spellcheck="false" required>
-      </label>
-      <button class="go" type="submit" id="submit">Run the check</button>
-    </form>
-    
-
-    <div class="status" id="status" role="status" aria-live="polite">
-      <span id="statusText">Reading the page…</span>
-      <div class="bar"><i></i></div>
+    <div class="two">
+      <div>
+        <label for="fn">First name</label>
+        <input type="text" id="fn" autocomplete="given-name" spellcheck="false">
+      </div>
+      <div>
+        <label for="ln">Last name</label>
+        <input type="text" id="ln" autocomplete="family-name" spellcheck="false">
+      </div>
     </div>
-    <div class="error" id="error" role="alert"></div>
+
+    <label for="em">Work email</label>
+    <input type="email" id="em" autocomplete="email" spellcheck="false" placeholder="name@godaddy.com">
+
+    <div class="err" id="gateErr"></div>
+    <button type="button" id="gateGo">Start using the tool</button>
+
+    <p class="fine">Stored in this browser only, and included on reports you save and share. Nothing else is collected. Use a contact you are happy for customers to reply to.</p>
   </section>
 
-  <section id="report" aria-live="polite"></section>
+  <!-- The tool itself -->
+  <div id="tool" hidden>
+    <section class="hero">
+      <h1>See what your website looks like to Google.</h1>
+      <p>Enter an address and this will read the page the way a search engine does: what it can understand, how quickly it loads, when the site was last touched, and whether the blog is still running.</p>
+
+      <form id="form">
+        <label class="field" for="url">
+          <span class="scheme">https://</span>
+          <input type="text" id="url" name="url" placeholder="yourbusiness.com" autocomplete="url" spellcheck="false" required>
+        </label>
+        <button class="go" type="submit" id="submit">Run the check</button>
+      </form>
+
+      <div class="whoami" id="whoami"></div>
+
+      <div class="status" id="status" role="status" aria-live="polite">
+        <span id="statusText">Reading the page&hellip;</span>
+        <div class="bar"><i></i></div>
+      </div>
+      <div class="error" id="error" role="alert"></div>
+    </section>
+
+    <section id="report" aria-live="polite"></section>
+  </div>
 
 </main>
 
@@ -233,418 +92,205 @@ footer .f-fine{font-size:.78rem;color:#70777b;max-width:30ch}
   </div>
 </footer>
 
+<script src="/app.js"></script>
 <script>
-const ENDPOINT = '/.netlify/functions/audit';
-
-/* ─────────────────────────────────────────────────────────────
-   PASTE YOUR GOOGLE PAGESPEED API KEY BETWEEN THE QUOTES BELOW.
-   This key is visible in the page source, which is fine ONLY if
-   you restrict it in Google Cloud Console:
-     Credentials > your key > Application restrictions
-       > Websites > add  https://YOUR-SITE.netlify.app/*
-   Restricted that way, the key only works from your own site.
-   Leave it empty and the performance section is simply skipped.
-   ───────────────────────────────────────────────────────────── */
-const PSI_KEY = 'AIzaSyCl3aJfhKhNp6GAfKTeYx8PREHP5oBXa5I';
 const $ = s => document.querySelector(s);
-const form = $('#form'), input = $('#url'), btn = $('#submit');
-const statusEl = $('#status'), statusText = $('#statusText'), errorEl = $('#error'), report = $('#report');
+const STORE_KEY = 'whc.author';
 
+let author = null;
+let lastAudit = null;
+let lastPsi = null;
 
-// The server can die mid-request and return nothing. Turn that into a real
-// message instead of a JSON parse error.
-async function readJson(res, label){
-  const text = await res.text();
-  if (!text.trim()){
-    if (res.status === 504 || res.status === 502){
-      throw new Error('That site took too long to respond and the ' + label + ' timed out. Try again, or try the www version of the address.');
-    }
-    if (res.status === 404){
-      throw new Error('The ' + label + ' service is not deployed. Check the Functions tab in Netlify.');
-    }
-    throw new Error('The server closed the connection without responding. This usually means the site is very slow. Try again.');
-  }
-  try { return JSON.parse(text); }
-  catch {
-    throw new Error('The server returned an unexpected response (status ' + res.status + ').');
-  }
+/* ── identity ── */
+function loadAuthor(){
+  try { return JSON.parse(localStorage.getItem(STORE_KEY) || 'null'); }
+  catch { return null; }
+}
+function saveAuthor(a){
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(a)); } catch {}
 }
 
-const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
-  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const fmtDate = iso => iso ? new Date(iso).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}) : '—';
-const yn = (v, good='Yes', bad='No') =>
-  `<span class="${v?'yes':'no'}">${v?good:bad}</span>`;
+function showGate(){
+  $('#gate').hidden = false;
+  $('#tool').hidden = true;
+  if (author){
+    const bits = author.name.split(' ');
+    $('#fn').value = bits.shift() || '';
+    $('#ln').value = bits.join(' ');
+    $('#em').value = author.email || '';
+  }
+  $('#fn').focus();
+}
 
-let ticker;
-form.addEventListener('submit', async e => {
+function showTool(){
+  $('#gate').hidden = true;
+  $('#tool').hidden = false;
+  $('#whoami').innerHTML =
+    'Reports will be signed <b>' + esc(author.name) + '</b>' +
+    (author.email ? ' &middot; ' + esc(author.email) : '') +
+    ' <button type="button" id="switchUser">Not you?</button>';
+  $('#switchUser').addEventListener('click', showGate);
+}
+
+$('#gateGo').addEventListener('click', () => {
+  const first = $('#fn').value.trim();
+  const last  = $('#ln').value.trim();
+  const email = $('#em').value.trim();
+  const err   = $('#gateErr');
+
+  if (!first || !last){ err.textContent = 'Enter both a first and last name.'; return; }
+  if (!email){ err.textContent = 'Enter an email so customers can reach you.'; return; }
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ err.textContent = 'That email address does not look right.'; return; }
+
+  err.textContent = '';
+  author = { name: first + ' ' + last, email: email };
+  saveAuthor(author);
+  showTool();
+});
+
+['fn','ln','em'].forEach(id => $('#' + id).addEventListener('keydown', e => {
+  if (e.key === 'Enter') $('#gateGo').click();
+}));
+
+/* ── scan ── */
+$('#form').addEventListener('submit', async e => {
   e.preventDefault();
-  const url = input.value.trim();
+  const url = $('#url').value.trim();
   if (!url) return;
 
-  btn.disabled = true;
-  btn.textContent = 'Scanning…';
-  errorEl.classList.remove('on');
-  report.classList.remove('on');
-  statusEl.classList.add('on');
+  const btn = $('#submit');
+  btn.disabled = true; btn.textContent = 'Scanning\u2026';
+  $('#error').classList.remove('on');
+  $('#report').classList.remove('on');
+  $('#status').classList.add('on');
+  lastAudit = null; lastPsi = null;
 
-  const steps = ['Reading the page…','Checking the sitemap…','Looking for a blog feed…','Scoring the results…'];
+  const steps = ['Reading the page\u2026','Checking the sitemap\u2026','Looking for a blog feed\u2026','Checking the domain\u2026'];
   let i = 0;
-  statusText.textContent = steps[0];
-  ticker = setInterval(() => { i = Math.min(i + 1, steps.length - 1); statusText.textContent = steps[i]; }, 2600);
+  $('#statusText').textContent = steps[0];
+  const ticker = setInterval(() => { i = Math.min(i+1, steps.length-1); $('#statusText').textContent = steps[i]; }, 2200);
 
   try {
-    const res = await fetch(ENDPOINT, {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ url })
+    const res = await fetch(AUDIT_ENDPOINT, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ url: url })
     });
     const data = await readJson(res, 'scan');
     if (data.error) throw new Error(data.error);
-    render(data);
-    runPerformance(data.finalUrl);
+
+    lastAudit = data;
+    renderLive();
+    runPsi(data.finalUrl);
   } catch (err) {
-    errorEl.innerHTML = `<strong>The check did not finish.</strong>${esc(err.message || 'Something went wrong. Try again.')}`;
-    errorEl.classList.add('on');
+    $('#error').innerHTML = '<strong>The check did not finish.</strong>' + esc(err.message || 'Something went wrong.');
+    $('#error').classList.add('on');
   } finally {
     clearInterval(ticker);
-    statusEl.classList.remove('on');
-    btn.disabled = false;
-    btn.textContent = 'Run the check';
+    $('#status').classList.remove('on');
+    btn.disabled = false; btn.textContent = 'Run the check';
   }
 });
 
-function verdict(total){
-  if (total >= 90) return 'In good shape. The fixes below are refinements, not repairs.';
-  if (total >= 80) return 'Solid foundation with a few gaps that are costing visibility.';
-  if (total >= 70) return 'Working, but leaving real search traffic on the table.';
-  if (total >= 55) return 'Several issues are actively holding this site back in search.';
-  return 'This site needs attention. The items below are costing it customers.';
-}
-
-function render(d){
-  const s = d.score, seo = d.seo, ux = d.ux, fr = d.freshness, bl = d.blog;
+function renderLive(){
+  const d = lastAudit;
   const host = new URL(d.finalUrl).hostname;
 
-  const segs = s.breakdown.map(b => {
-    const pct = Math.round((b.score / b.max) * 100);
-    const cls = pct < 50 ? 'low' : pct < 80 ? 'mid' : '';
-    return {...b, pct, cls};
+  $('#report').innerHTML =
+    '<div class="report-head"><div>' +
+      '<h2>' + esc(host) + '</h2>' +
+      '<div class="when">Checked ' + new Date(d.scannedAt).toLocaleString() +
+        (d.platform.detected.length ? ' &middot; built on ' + esc(d.platform.detected.join(', ')) : '') +
+      '</div></div>' +
+      '<div class="actions"><button onclick="window.print()">Save as PDF</button></div>' +
+    '</div>' +
+
+    bylineHtml(author, null) +
+
+    '<div class="sharebar" id="sharebar">' +
+      '<h4>Share this with the customer</h4>' +
+      '<p>Saves the results exactly as they are now, with your name on them, at a permanent link.</p>' +
+      '<div class="link"><button type="button" id="saveBtn">Save &amp; create link</button></div>' +
+      '<p class="note" id="saveNote"></p>' +
+    '</div>' +
+
+    auditHtml(d) +
+
+    '<div id="psiSlot"><div class="sect">' +
+      '<h3>Speed and experience, measured by Google</h3>' +
+      '<div class="pending"><span class="dot"></span>Running Google\u2019s Lighthouse test. This usually takes 15 to 30 seconds.</div>' +
+    '</div></div>' +
+
+    disclaimerHtml();
+
+  $('#report').classList.add('on');
+  wireSave();
+  $('#report').scrollIntoView({
+    behavior: matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth',
+    block: 'start'
   });
-
-  const segBars = segs.map(b =>
-    `<div class="seg ${b.cls}" style="flex:${b.max}" title="${esc(b.area)}: ${b.score} of ${b.max}"><i style="width:${b.pct}%"></i></div>`
-  ).join('');
-  const segLabels = segs.map(b =>
-    `<div style="flex:${b.max}"><b>${b.score}/${b.max}</b>${esc(b.area)}</div>`
-  ).join('');
-
-  const findings = s.findings.length
-    ? s.findings.map(f => `
-      <div class="finding ${f.severity}">
-        <div class="tick"></div>
-        <div class="body">
-          <div class="label">${esc(f.label)}</div>
-          <div class="detail">${esc(f.detail)}</div>
-          <div class="area">${esc(f.area)}</div>
-        </div>
-      </div>`).join('')
-    : `<p class="clean">No issues flagged. That is rare.</p>`;
-
-  const critCount = s.findings.filter(f => f.severity === 'critical').length;
-
-  const posts = bl.recentPosts && bl.recentPosts.length
-    ? `<ul class="posts">${bl.recentPosts.map(p =>
-        `<li><span>${esc(p.title || 'Untitled post')}</span><time>${fmtDate(p.date)}</time></li>`).join('')}</ul>`
-    : '';
-
-  report.innerHTML = `
-  <div class="report-head">
-    <div>
-      <h2>${esc(host)}</h2>
-      <div class="when">Checked ${new Date(d.scannedAt).toLocaleString()} &middot; took ${(d.scanDurationMs/1000).toFixed(1)}s${d.platform.detected.length ? ' &middot; built on ' + esc(d.platform.detected.join(', ')) : ''}</div>
-    </div>
-    <div class="actions">
-      <button onclick="window.print()">Save as PDF</button>
-    </div>
-  </div>
-
-  <div class="meter">
-    <div class="meter-top">
-      <div class="meter-score">${s.total}</div>
-      <div class="meter-grade">Grade ${esc(s.grade)}</div>
-      <div class="meter-verdict">${esc(verdict(s.total))}</div>
-    </div>
-    <div class="segs">${segBars}</div>
-    <div class="seg-labels">${segLabels}</div>
-  </div>
-
-  <div class="sect">
-    <h3>What to fix, most urgent first${critCount ? ` (${critCount} urgent)` : ''}</h3>
-    ${findings}
-  </div>
-
-  <div class="sect">
-    <h3>How search engines see this page</h3>
-    <div class="snippet">
-      <div class="k">Title shown in search results</div>
-      <div class="v ${seo.title ? '' : 'empty'}">${seo.title ? esc(seo.title) : 'Missing'}</div>
-    </div>
-    <div class="snippet">
-      <div class="k">Description shown underneath</div>
-      <div class="v ${seo.description ? '' : 'empty'}">${seo.description ? esc(seo.description) : 'Missing — Google will write its own'}</div>
-    </div>
-    <div class="snippet">
-      <div class="k">Main heading on the page</div>
-      <div class="v ${seo.h1s.length ? '' : 'empty'}">${seo.h1s.length ? esc(seo.h1s[0]) : 'Missing'}</div>
-    </div>
-    <div class="grid" style="margin-top:18px">
-      ${row('Headings (H2 / H3)', `${seo.h2Count} / ${seo.h3Count}`)}
-      ${row('Words of content', seo.wordCount)}
-      ${row('Links on page', `${seo.internalLinks} internal, ${seo.externalLinks} out`)}
-      ${row('Images missing alt text', `${seo.imagesMissingAlt} of ${seo.imageCount}`)}
-      ${row('Structured data', seo.schemaBlocks ? `${seo.schemaBlocks} block(s)` : yn(false,'','None'))}
-      ${row('Canonical tag', seo.canonical ? yn(true) : yn(false))}
-      ${row('Social preview image', seo.ogImage ? yn(true) : yn(false))}
-      ${row('Language set', seo.lang ? esc(seo.lang) : yn(false))}
-      ${row('robots.txt', yn(fr.robotsTxt))}
-      ${row('XML sitemap', yn(fr.sitemapFound))}
-    </div>
-  </div>
-
-  <div class="sect">
-    <h3>Visitor experience</h3>
-    <div class="grid">
-      ${row('Secure (HTTPS)', yn(ux.https))}
-      ${row('Mobile-ready', yn(ux.mobileReady))}
-      ${row('Server response', `${(ux.responseMs/1000).toFixed(2)}s`)}
-      ${row('Page HTML size', `${ux.htmlKb} KB`)}
-      ${row('Redirects before load', ux.redirectHops)}
-      ${row('Scripts / stylesheets', `${ux.scripts} / ${ux.stylesheets}`)}
-      ${row('Lazy-loaded images', `${ux.lazyImages} of ${ux.imageCount}`)}
-      ${row('Modern image formats', ux.modernFormats ? yn(true) : yn(false,'','None'))}
-      ${row('Compression', ux.compression ? esc(ux.compression) : yn(false,'','None'))}
-      ${row('Tap-to-call link', yn(ux.hasTelLink))}
-      ${row('Contact form', yn(ux.forms > 0))}
-      ${row('Security headers', yn(ux.hsts && ux.xContentType, 'Present', 'Incomplete'))}
-    </div>
-  </div>
-
-  <div class="sect">
-    <h3>When was this site last touched?</h3>
-    <div class="grid">
-      ${row('Most recent update', fr.newestLastmod ? fmtDate(fr.newestLastmod) : 'Not published')}
-      ${row('Days since that update', fr.daysSinceAnyUpdate ?? '—')}
-      ${row('Pages in sitemap', fr.pageCount || '—')}
-      ${row('Pages with a date', fr.withLastmod || '—')}
-      ${row('Untouched over a year', fr.staleOverYear || (fr.withLastmod ? '0' : '—'))}
-      ${row('Updated in last 90 days', fr.updatedLast90 || (fr.withLastmod ? '0' : '—'))}
-      ${row('Oldest page date', fr.oldestLastmod ? fmtDate(fr.oldestLastmod) : '—')}
-      ${row('Footer copyright year', fr.copyrightYear || '—')}
-    </div>
-    ${fr.notes.length ? `<p style="margin-top:12px;font-size:.86rem;color:var(--muted)">${esc(fr.notes.join(' '))}</p>` : ''}
-  </div>
-
-  <div class="sect">
-    <h3>Blog activity</h3>
-    <div class="grid">
-      ${row('Blog or feed found', yn(bl.feedFound || !!bl.blogUrlFound))}
-      ${row('Posts detected', bl.postCount || '—')}
-      ${row('Most recent post', bl.latestPostDate ? fmtDate(bl.latestPostDate) : '—')}
-      ${row('Days since last post', bl.daysSinceLastPost ?? '—')}
-      ${row('Posts in last 90 days', bl.postsLast90 ?? '—')}
-      ${row('Posts in last 12 months', bl.postsLast365 ?? '—')}
-      ${row('Typical gap between posts', bl.averageGapDays ? bl.averageGapDays + ' days' : '—')}
-      ${row('Publishing pattern', esc(bl.cadence))}
-    </div>
-    ${posts}
-  </div>
-
-  <div class="sect" id="domainSect"></div>
-
-  <div class="sect" id="psiSect">
-    <h3>Speed and experience, measured by Google</h3>
-    <div class="pending"><span class="dot"></span>Running Google's Lighthouse test. This usually takes 15 to 30 seconds.</div>
-  </div>
-
-  <div class="disclaimer">
-    <h4>Important: please read before relying on this report</h4>
-
-    <p><strong>This is not a GoDaddy tool.</strong> This Website Health Check is an independent personal project. It was created and is operated solely by its author, who happens to be employed by GoDaddy Inc. but who built and runs this tool entirely on personal time, using personal resources, and outside the scope of their employment. GoDaddy Inc. and its affiliates did not create, commission, review, approve, endorse, sponsor, license or authorize this tool or this report. GoDaddy has no involvement in it and no responsibility for it. No statement, score, finding or recommendation in this report is made by, on behalf of, or attributable to GoDaddy, and nothing here should be read as a GoDaddy assessment, quote, offer, commitment or official communication. The author is not acting as a representative or agent of GoDaddy in providing this report. Any reference to GoDaddy is for identification only. All GoDaddy trademarks, logos and brand names remain the property of their respective owner, and no affiliation, sponsorship or endorsement is claimed or implied.</p>
-
-    <p><strong>The results are automated estimates, not a professional audit.</strong> This tool reads publicly available information from the address you entered at a single moment in time and applies its own scoring. It is informational only. It is not a professional SEO audit, security assessment, accessibility conformance evaluation or compliance review, and it is not legal, financial, technical, regulatory or business advice. The scores and grades are the author's own weighting. They are not produced by, affiliated with, validated by or predictive of Google or any other search engine, and they do not measure, reflect or forecast how any search engine will rank, index or treat a website. No guarantee is made regarding rankings, traffic, conversions, revenue or business outcomes.</p>
-
-    <p><strong>Results may be incomplete or wrong.</strong> Websites that block automated requests, build their content with JavaScript, sit behind a login, firewall or bot protection, or that change after the scan may produce inaccurate or misleading results. Absence of a finding does not mean absence of a problem. This report is provided "as is" and "as available", without warranty of any kind, express or implied, including any implied warranty of accuracy, completeness, merchantability, fitness for a particular purpose or non-infringement. You are solely responsible for independently verifying any finding before acting on it. To the fullest extent permitted by law, the author disclaims all liability for any direct, indirect, incidental, consequential or other loss or damage arising from use of, or reliance on, this tool or this report.</p>
-
-    <p><strong>Permitted use.</strong> Run this tool only on websites you own or have explicit permission to test. You are responsible for ensuring your use complies with applicable law and with the terms of service of any site you scan.</p>
-  </div>
-  `;
-  renderDomain(d.domain);
-  report.classList.add('on');
-  report.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth', block:'start'});
 }
 
-function renderDomain(d){
-  const el = document.getElementById('domainSect');
-  if (!d || !d.queried){ el.remove(); return; }
-  const age = d.ageYears !== null
-    ? (d.ageYears < 1 ? 'Under a year' : d.ageYears + (d.ageYears === 1 ? ' year' : ' years'))
-    : '—';
-  let exp = '—';
-  if (d.daysToExpiry !== null){
-    exp = d.daysToExpiry < 0
-      ? `<span class="no">Expired ${Math.abs(d.daysToExpiry)} days ago</span>`
-      : d.daysToExpiry < 45
-        ? `<span class="no">${fmtDate(d.expires)} (${d.daysToExpiry} days)</span>`
-        : `${fmtDate(d.expires)} (${d.daysToExpiry} days)`;
-  }
-  el.innerHTML = `
-    <h3>Domain registration</h3>
-    <div class="grid">
-      ${row('Domain', esc(d.domain))}
-      ${row('Registrar', d.registrar ? esc(d.registrar) : 'Not published')}
-      ${row('Registered', d.created ? fmtDate(d.created) : '—')}
-      ${row('Domain age', esc(age))}
-      ${row('Expires', exp)}
-      ${row('Privacy protection', d.privacyProtected === null ? '—' : yn(d.privacyProtected, 'On', 'Off'))}
-      ${row('DNSSEC', d.dnssec === null ? '—' : yn(d.dnssec, 'Enabled', 'Off'))}
-      ${row('Nameservers', d.nameservers.length ? esc(d.nameservers.length + ' found') : '—')}
-    </div>
-    <p class="src">Registration data from public RDAP records.</p>`;
+async function runPsi(url){
+  lastPsi = await fetchPsi(url);
+  const slot = $('#psiSlot');
+  if (slot) slot.innerHTML = psiHtml(lastPsi);
 }
 
-function band(n){ return n === null ? '' : n >= 90 ? 'good' : n >= 50 ? 'mid' : 'bad'; }
-const pct = v => (typeof v === 'number' ? Math.round(v * 100) : null);
+/* ── save & share ── */
+function wireSave(){
+  const btn = $('#saveBtn');
+  if (!btn) return;
+  btn.addEventListener('click', async () => {
+    btn.disabled = true; btn.textContent = 'Saving\u2026';
+    $('#saveNote').textContent = '';
+    try {
+      const res = await fetch(SAVE_ENDPOINT, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ audit: lastAudit, psi: lastPsi, author: author })
+      });
+      const out = await readJson(res, 'save');
+      if (out.error) throw new Error(out.error);
 
-function readField(exp){
-  if (!exp || !exp.metrics) return null;
-  const m = exp.metrics;
-  const pick = (key, divide, unit) => {
-    const d = m[key];
-    if (!d) return null;
-    return {
-      value: +(d.percentile / divide).toFixed(divide === 1 ? 0 : 2),
-      unit,
-      rating: d.category ? d.category.toLowerCase().replace(/_/g,' ') : ''
-    };
-  };
-  return {
-    overall: exp.overall_category ? exp.overall_category.toLowerCase().replace(/_/g,' ') : null,
-    lcp: pick('LARGEST_CONTENTFUL_PAINT_MS', 1000, 's'),
-    inp: pick('INTERACTION_TO_NEXT_PAINT', 1, 'ms'),
-    cls: pick('CUMULATIVE_LAYOUT_SHIFT_SCORE', 100, '')
-  };
-}
+      const link = location.origin + '/r/' + out.id;
+      $('#sharebar').innerHTML =
+        '<h4>Link ready</h4>' +
+        '<p>This report is frozen as of now. The customer sees exactly what you see.</p>' +
+        '<div class="link">' +
+          '<input type="text" id="shareLink" value="' + esc(link) + '" readonly>' +
+          '<button type="button" id="copyBtn">Copy</button>' +
+          '<button type="button" class="ghost" id="openBtn">Open</button>' +
+        '</div>' +
+        '<p class="note">Anyone with this link can view the report.</p>';
 
-function readOpportunities(audits){
-  if (!audits) return [];
-  const out = [];
-  for (const id in audits){
-    const a = audits[id];
-    if (!a || a.score === null || a.score === undefined || a.score >= 0.9) continue;
-    const ms = a.details && a.details.overallSavingsMs;
-    const by = a.details && a.details.overallSavingsBytes;
-    if (!ms && !by) continue;
-    out.push({ title: a.title, savingsMs: ms ? Math.round(ms) : null, savingsKb: by ? Math.round(by/1024) : null });
-  }
-  return out.sort((a,b) => (b.savingsMs||0)-(a.savingsMs||0) || (b.savingsKb||0)-(a.savingsKb||0)).slice(0,6);
-}
-
-function psiFail(msg){
-  const el = document.getElementById('psiSect');
-  if (el) el.innerHTML = `<h3>Speed and experience, measured by Google</h3>
-    <p class="pending" style="color:var(--crit)">${esc(msg)}</p>`;
-}
-
-// Called straight from the browser. Netlify functions cap at 10s on most plans
-// and Lighthouse often needs 30, so this cannot go through the server.
-async function runPerformance(url){
-  const el = document.getElementById('psiSect');
-  if (!el) return;
-
-  if (!PSI_KEY){
-    el.innerHTML = `<h3>Speed and experience, measured by Google</h3>
-      <p class="pending" style="color:var(--muted)">Performance checks are not set up. Add your PageSpeed API key in index.html.</p>`;
-    return;
-  }
-
-  const api = new URL('https://www.googleapis.com/pagespeedonline/v5/runPagespeed');
-  api.searchParams.set('url', url);
-  api.searchParams.set('strategy', 'mobile');
-  ['performance','accessibility','best-practices','seo'].forEach(c => api.searchParams.append('category', c));
-  api.searchParams.set('key', PSI_KEY);
-
-  try {
-    const res = await fetch(api.href, { signal: AbortSignal.timeout(90000) });
-    const j = await res.json();
-
-    if (j.error){
-      const m = j.error.message || '';
-      if (/API key not valid/i.test(m))      return psiFail('The PageSpeed API key is not valid. Check it is enabled and the referrer restriction includes this site.');
-      if (/referer|referrer|blocked/i.test(m)) return psiFail('Google rejected the key for this site. Add this domain under Application restrictions in Google Cloud Console.');
-      if (/quota|rate/i.test(m))             return psiFail('PageSpeed quota reached. Wait a moment and try again.');
-      if (/lighthouse|DOCUMENT_REQUEST|ERRORED/i.test(m)) return psiFail('Google could not load that page. The site may be blocking automated requests.');
-      return psiFail(m || 'The performance check failed.');
+      $('#copyBtn').addEventListener('click', async () => {
+        $('#shareLink').select();
+        try { await navigator.clipboard.writeText(link); }
+        catch { document.execCommand('copy'); }
+        $('#copyBtn').textContent = 'Copied';
+        setTimeout(() => { $('#copyBtn').textContent = 'Copy'; }, 1800);
+      });
+      $('#openBtn').addEventListener('click', () => window.open(link, '_blank', 'noopener'));
+    } catch (err) {
+      $('#saveNote').textContent = err.message || 'Could not save the report.';
+      btn.disabled = false; btn.textContent = 'Save & create link';
     }
-
-    const lr = j.lighthouseResult || {};
-    const c = lr.categories || {};
-    const sc = {
-      performance: pct(c.performance && c.performance.score),
-      accessibility: pct(c.accessibility && c.accessibility.score),
-      bestPractices: pct(c['best-practices'] && c['best-practices'].score),
-      seo: pct(c.seo && c.seo.score)
-    };
-    const dv = k => (lr.audits && lr.audits[k] && lr.audits[k].displayValue) || '—';
-
-    const cards = [
-      ['Performance', sc.performance], ['Accessibility', sc.accessibility],
-      ['Best practices', sc.bestPractices], ['SEO', sc.seo]
-    ].map(([l,n]) => `<div class="psi-score ${band(n)}"><div class="n">${n===null?'—':n}</div><div class="l">${l}</div></div>`).join('');
-
-    const f = readField(j.loadingExperience) || readField(j.originLoadingExperience);
-    const fieldBlock = f ? `
-      <h3 style="margin-top:34px">What real visitors experienced</h3>
-      <div class="grid">
-        ${row('Overall verdict', esc(f.overall || '—'))}
-        ${row('Largest paint (LCP)', f.lcp ? `${f.lcp.value}${f.lcp.unit} <span style="color:var(--muted);font-weight:400">${esc(f.lcp.rating)}</span>` : '—')}
-        ${row('Responsiveness (INP)', f.inp ? `${f.inp.value}${f.inp.unit} <span style="color:var(--muted);font-weight:400">${esc(f.inp.rating)}</span>` : '—')}
-        ${row('Layout shift (CLS)', f.cls ? `${f.cls.value} <span style="color:var(--muted);font-weight:400">${esc(f.cls.rating)}</span>` : '—')}
-      </div>
-      <p class="src">From the Chrome User Experience Report, based on real Chrome users over the last 28 days. This is the data that feeds Google's page experience signals.</p>` : '';
-
-    const opps = readOpportunities(lr.audits);
-    const oppBlock = opps.length ? `
-      <h3 style="margin-top:34px">Biggest speed wins</h3>
-      <ul class="opp">${opps.map(o => {
-        const save = o.savingsMs ? `${(o.savingsMs/1000).toFixed(1)}s` : `${o.savingsKb} KB`;
-        return `<li><span>${esc(o.title)}</span><span class="save">saves ${esc(save)}</span></li>`;
-      }).join('')}</ul>` : '';
-
-    el.innerHTML = `
-      <h3>Speed and experience, measured by Google</h3>
-      <div class="psi-scores">${cards}</div>
-      <p class="src">Scored by Google Lighthouse on a simulated mobile device. 90 and above is good, below 50 is poor.</p>
-      ${fieldBlock}
-      <h3 style="margin-top:34px">Lab timings</h3>
-      <div class="grid">
-        ${row('Largest paint', esc(dv('largest-contentful-paint')))}
-        ${row('Layout shift', esc(dv('cumulative-layout-shift')))}
-        ${row('Blocking time', esc(dv('total-blocking-time')))}
-        ${row('First paint', esc(dv('first-contentful-paint')))}
-        ${row('Speed index', esc(dv('speed-index')))}
-      </div>
-      ${oppBlock}`;
-  } catch (err) {
-    psiFail(err.name === 'TimeoutError'
-      ? 'Google took too long to analyze that page. Large or slow sites sometimes exceed the limit.'
-      : 'Could not reach the PageSpeed service: ' + (err.message || 'unknown error'));
-  }
+  });
 }
 
-function row(label, value){
-  return `<div class="row"><span>${esc(label)}</span><span>${value}</span></div>`;
-}
+/* ── boot ── */
+author = loadAuthor();
+if (author && author.name) showTool(); else showGate();
+</script>
+<script>
+// Printing should never hide folded detail.
+(function(){
+  let reopened = [];
+  addEventListener('beforeprint', () => {
+    reopened = [...document.querySelectorAll('details:not([open])')];
+    reopened.forEach(d => d.open = true);
+  });
+  addEventListener('afterprint', () => { reopened.forEach(d => d.open = false); reopened = []; });
+})();
 </script>
 </body>
 </html>

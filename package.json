@@ -1,0 +1,9 @@
+{
+  "name": "website-audit-tool",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Independent website SEO, UX and freshness audit tool",
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
+  }
+}
